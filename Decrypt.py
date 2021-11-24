@@ -16,6 +16,7 @@ with open("important.key", "rb") as keyed:
     key = Fernet(keye)
     keyed.close()
 
+
 def decrypt(filename, file):
     with open(filename, "rb") as file1:
         decrypted = key.decrypt(file1.read())
@@ -30,14 +31,14 @@ def get_file():
         for file in f:
             filePath = os.path.join(r, file)
             decrypt(filePath, file)
-    print(colored('DECRYPTION OVER !', 'red'), colored('Better luck next time.', 'green'))
+    print(colored('DECRYPTION OVER !', 'blue'), colored('Better luck next time.', 'green'))
 
 
 if __name__ == '__main__':
     try:
         Go = input('Hello user, do you want to start decrypting ?\nYes to begin or anything else to abort')
         if Go.lower() == "yes":
-            print(colored('Decrypting started !', 'red'))
+            print(colored('Decrypting started !', 'blue'))
             key()
             time.sleep(2)
             get_file()
